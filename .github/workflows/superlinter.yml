@@ -1,16 +1,57 @@
+# This is a basic workflow to help you get started with Actions
+name: CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
 on:
-  schedule:
-    - cron: '30 5 * * 1,3'
-    - cron: '30 5 * * 2,4'
+  workflow_dispatch:
+  push:
+    branches: [ main ]
 
 jobs:
-  test_schedule:
-    runs-on: ubuntu-latest
+
+  ephemeral:
+    runs-on: [self-hosted, macOS]
     steps:
-      - name: Not on Monday or Wednesday
-        if: github.event.schedule != '30 5 * * 1,3'
-        run: echo "This step will be skipped on Monday and Wednesday"
-      - name: Every time
-        run: echo "This step will always run"
+      - uses: actions/checkout@v2
+      - name: build
+        id: build
+        uses: veertuinc/anka-vm-github-action@v1.3.2
+        with:
+          anka-vm-template-name: "12.3.1"
+          vm-commands: |
+            env
+            ls -laht ./
+            ls -laht ../
+            pwd
+            echo \"build\"
+      - name: test
+        id: test
+        uses: veertuinc/anka-vm-github-action@v1.3.2
+        with:
+          skip-registry-pull: true
+          anka-vm-template-name: "12.3.1"
+          vm-commands: |
+            env
+            ls -laht ./
+            ls -laht ../
+            pwd
+            echo "HERE test"
+  # persistent:
+  #   runs-on: [self-hosted, macOS]
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: build
+  #       uses: veertuinc/anka-vm-github-action@v1.2.1-beta
+  #       with:
+  #         skip-registry-pull: true
+  #         anka-template: "11.0.0-beta5-anka-develop"
+  #         commands: |
+  #           env
+  #           ls -laht ./
+  #           ls -laht ../
+  #           pwd
+  #           echo \"HERE\" && \
+  #           echo \"THERE HERE WHERE\"
              
 
