@@ -3,7 +3,7 @@ name: TATA-ELXSI
 on: push
 
 jobs:
-  job_1:
+  TATA_JOB:
     runs-on: ubuntu-latest
     steps:
       - name: My first step git-hub action
